@@ -95,67 +95,59 @@ print(nkw)
 print(ndk)
 wordsintopic=[]
 
-for f in xrange(cust):
+for f in range(0,cust):
 	tsum=0
-	for g in xrange(total_words):									#Calculate number of words in each topic.					
+	for g in range(0,total_words):									#Calculate number of words in each topic.					
 		tsum+=nkw[g][f]							
 	wordsintopic.append(tsum)
 #print(wordsintopic)	
 
 toparr=[]
-for y in xrange(cust-1):
+for y in range(0,cust):
 	toparr.append(y)										#Put topic numbers in an array
 #print(toparr)
 
 #print(texts[19])
 
-custiter=500												#Number of iterations specified by user.
+custiter=2												#Number of iterations specified by user.
 tempsum=0
-#print(texts[0])
+print(texts[0])
 while(custiter!=0):
-	for d in xrange(doc_len):
-		for w in xrange(total_words):
+	for d in range(0,doc_len):
+		for w in range(0,total_words):
 			word=texts[w]
 			topic=z[w]
-			#t0=b[w][d]									
-			ndk[topic][d]-=1							#Decrement ndk,nkw.
-			nkw[w][topic]-=1
-			nk[topic]-=1	
+			t0=b[w][d]									
+			ndk[t0][d]-=1									#Decrement ndk,nkw.
+			nkw[w][t0]-=1	
 			#print(t0,word)
-			denom_a=wordsindoc[d]+cust*alpha	#Calculate denominator for p_z
+			denom_a=wordsindoc[d]+cust*alpha
+			#denom_b=wordsintopic+total_words*eta				#Calculate denominator for p_z
 			#print(denom_a,denom_b)
 			p_z=[]
-			for k in xrange(cust-1):
+			for k in range(0,cust):
 				#print(k)
 				denom_b=wordsintopic[k]+total_words*eta
-				#print(wordsintopic[k],denom_a,denom_b)
-				x=((nkw[w][k]+eta)/denom_b)*((ndk[k][d]+alpha/denom_a))			#Calculate p_z 
-				if x>0:
-					p_z.append(x)
-				else:
-					p_z.append(0)				
+				x=((nkw[w][k]+eta)/denom_b)*((ndk[k][d]+alpha)/denom_a)			#Calculate p_z 
+				p_z.append(x)				
 				tempsum+=x
-			#print(p_z)			
-			probs=np.array(p_z/tempsum)
+			#print(p_z)
+			probs=np.array(p_z/tempsum)  
 			probs/=probs.sum()
-			#print(probs)
-			#t0=np.random.choice(toparr,1,p=probs)		#Sampling from multinomial distribution.
-			topic=np.random.multinomial(1,probs).argmax()
-			#rand=np.random.randint(0,len(t0[0]))						
-			#topic=t0[0][rand]
-			#print(topic)
-			z[w]=topic			
-			#b[w][d]=t1									#Increment ndk,nkw.
-			ndk[topic][d]+=1
-			nkw[w][topic]+=1
+			#print(probs.sum())   
+			t1=np.random.choice(toparr,1,p=probs)						#Sampling from multinomial distribution.
+			t1=t1[0]
+			#print(t1)
+			b[w][d]=t1									#Increment ndk,nkw.
+			ndk[t1][d]+=1
+			nkw[w][t1]+=1
 			#print(nkw)
-			nk[topic]+=1			
-			'''if(t0!=t1):
+			if(t0!=t1):
 				print('doc:'+str(d),'token:'+str(word),'topic:'+str(t0),'=>',str(t1))
-			'''
+			
 	#print(custiter)	
 	custiter-=1
-print(z)
+print(nkw)
 def rowsum(a):
 	rsum=0
 	rsum=a.sum(axis=1)
@@ -173,15 +165,17 @@ for s in range(0,total_words):
 	for v in range(0,cust):
 		#print(nkw[s][v])
 		nkw1[s][v]=(nkw[s][v]+eta)	
-#print(nkw)
+#print(nkw1)
 
 phi=np.zeros((total_words,cust))
 
 for b in range(0,total_words):
 	for c in range(0,cust):
 		phi=(nkw1[b][c])/rowsum(nkw1)
-#print(phi)
+print(phi)
 print(texts)
+
+
 
 
 
